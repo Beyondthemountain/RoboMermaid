@@ -177,8 +177,16 @@ def render_mermaid(
     included_edges: Set[Tuple[str, str]],
 ) -> str:
     lines: List[str] = []
+
+    # Front-matter (YAML)
+    lines.append("---")
+    lines.append(f"title: {title}")
+    lines.append("---")
+
+#    lines.append(f"flowchart {layout}")
+#    lines.append(f"  title {title}")
+    
     lines.append(f"flowchart {layout}")
-    lines.append(f"  title {title}")
     lines.append("")
 
     for nid in sorted(included_nodes):
