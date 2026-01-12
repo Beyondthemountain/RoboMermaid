@@ -1,0 +1,68 @@
+system:
+  name: Example Platform
+
+nodes:
+  ingest:
+    label: Ingest
+    kind: service
+    tags: [core, ingestion]
+  parse:
+    label: Parse
+    kind: service
+    tags: [core, processing]
+  store:
+    label: Store
+    kind: database
+    tags: [core, storage]
+  audit:
+    label: Audit
+    kind: service
+    tags: [security, observability]
+  auth:
+    label: Auth
+    kind: service
+    tags: [security, core]
+
+edges:
+  - from: ingest
+    to: parse
+    tags: [core, dataflow]
+  - from: parse
+    to: store
+    tags: [core, dataflow]
+  - from: ingest
+    to: audit
+    tags: [observability]
+  - from: ingest
+    to: auth
+    tags: [security]
+
+views:
+  overview:
+    title: System Overview
+    include:
+      tags: [core]          # include nodes/edges that have these tags
+    layout: LR
+
+  dataflow:
+    title: Data Flow
+    include:
+      edge_tags: [dataflow] # include edges by tag (nodes auto-included)
+    layout: LR
+
+  security:
+    title: Security View
+    include:
+      tags: [security]      # nodes with security tag + any edges between them
+    expand:
+      neighbours: 1         # pull in immediate neighbours for context
+    layout: TB
+
+  ingest_detail:
+    title: Ingest Detail
+    include:
+      nodes: [ingest]       # explicit start point
+    expand:
+      outbound: 2           # include downstream up to depth 2
+      inbound: 1            # include upstream up to depth 1
+    layout: LR
