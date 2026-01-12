@@ -1,0 +1,11 @@
+flowchart LR
+  title System Overview
+
+  auth["Auth"]
+  ingest["Ingest"]
+  parse["Parse"]
+  store[("Store")]
+
+  ingest --> auth
+  ingest --> parse
+  parse --> store

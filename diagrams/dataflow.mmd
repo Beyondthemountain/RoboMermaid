@@ -1,0 +1,9 @@
+flowchart LR
+  title Data Flow
+
+  ingest["Ingest"]
+  parse["Parse"]
+  store[("Store")]
+
+  ingest --> parse
+  parse --> store
