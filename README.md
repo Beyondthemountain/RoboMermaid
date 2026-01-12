@@ -29,10 +29,11 @@ Use normal Mermaid syntax for any diagram type (flowchart, sequence, journey, st
 
 A tag applies to the **next Mermaid statement**:
 
-```mermaid
-%%@view:overview,customer
-A[Ingest]
-```
+  _mermaid_  
+  _%%@view:overview,customer_  
+  _flowchart TD_  
+  _A[Ingest]_  
+
 
 This line will appear in the `overview` and `customer` views.
 
@@ -40,14 +41,15 @@ This line will appear in the `overview` and `customer` views.
 
 For multi-line constructs, use begin/end markers:
 
-```mermaid
-%%@begin:view=security
-subgraph Auth
-  A1[Login]
-  A2[Token]
-end
-%%@end
-```
+  _mermaid_  
+  _%%@begin:view=security_  
+  _flowchart TD_  
+  _subgraph Auth_  
+    _A1[Login]_  
+    _A2[Token]_  
+  _end_  
+  _%%@end_  
+
 
 The entire block belongs to the `security` view.
 
