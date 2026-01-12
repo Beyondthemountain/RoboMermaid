@@ -1,0 +1,80 @@
+flowchart LR
+%% Global config (included in all views)
+%%{init: {"theme":"default"}}%%
+
+%%@view:overview,security,ops
+user["User"]:::actor
+
+%%@view:overview,security
+web["Web / Mobile UI"]:::component
+
+%%@view:overview,security
+api_gw["API Gateway"]:::component
+
+%%@view:overview,security
+auth["Auth Service"]:::service
+
+%%@view:overview,dataflow
+ingest["Ingest Service"]:::service
+
+%%@view:overview,dataflow
+parse["Parse Service"]:::service
+
+%%@view:overview,dataflow
+store[("Primary Data Store")]:::data
+
+%%@view:ops
+obs["Observability (Logs/Metrics/Tracing)"]:::ops
+
+%%@view:ops
+queue[("Event Bus / Queue")]:::data
+
+%%@view:security
+kms["Key Management (KMS)"]:::security
+
+%% Connections (tag edges so they carve cleanly)
+%%@view:overview,security
+user --> web
+
+%%@view:overview,security
+web --> api_gw
+
+%%@view:overview,security
+api_gw --> auth
+
+%%@view:overview,dataflow
+api_gw --> ingest
+
+%%@view:overview,dataflow
+ingest --> parse
+
+%%@view:overview,dataflow
+parse --> store
+
+%%@view:ops
+ingest --> queue
+
+%%@view:ops
+parse --> queue
+
+%%@view:ops
+ingest -.-> obs
+%%@view:ops
+parse -.-> obs
+%%@view:ops
+api_gw -.-> obs
+%%@view:ops
+auth -.-> obs
+
+%%@view:security
+auth --> kms
+%%@view:security
+api_gw --> kms
+
+%% Styles (global)
+classDef actor fill:#fff,stroke:#333,stroke-width:1px;
+classDef component fill:#f7f7ff,stroke:#333,stroke-width:1px;
+classDef service fill:#eef9ff,stroke:#333,stroke-width:1px;
+classDef data fill:#fff8e6,stroke:#333,stroke-width:1px;
+classDef ops fill:#f0fff4,stroke:#333,stroke-width:1px;
+classDef security fill:#fff0f0,stroke:#333,stroke-width:1px;
