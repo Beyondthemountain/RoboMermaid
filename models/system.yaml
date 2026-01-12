@@ -1,5 +1,5 @@
 system:
-  name: Example Platform
+  name: Example Platform version 2
 
 nodes:
   ingest:
