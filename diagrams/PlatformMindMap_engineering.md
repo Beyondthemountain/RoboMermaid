@@ -1,13 +1,13 @@
 ---
-title: "overview"
+title: "engineering"
 source: "diagrams-src/PlatformMindMap.mmd"
 version: "ecd4fa9"
 generated: "2026-01-13T16:19:43+00:00"
 ---
 
-# overview
+# engineering
 
-[View SVG](./PlatformMindMap_overview.svg)
+[View SVG](./PlatformMindMap_engineering.svg)
 
 ```mermaid
 mindmap
@@ -18,9 +18,13 @@ mindmap
 
 
 
-    Product
     Engineering
-    Security
-    Operations
-    Stakeholders
+      Services
+        API_Gateway
+        Auth
+        Ingest
+        Parse
+      Data
+        Store
+        Event_Bus
 ```

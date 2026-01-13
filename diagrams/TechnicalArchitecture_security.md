@@ -1,8 +1,8 @@
 ---
 title: "security"
 source: "diagrams-src/TechnicalArchitecture.mmd"
-version: "0c61dc3"
-generated: "2026-01-13T16:11:52+00:00"
+version: "ecd4fa9"
+generated: "2026-01-13T16:19:43+00:00"
 ---
 
 # security
