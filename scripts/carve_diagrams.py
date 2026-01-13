@@ -175,11 +175,13 @@ def make_md_provenance(
 def render_svg(mmd_path: Path, svg_path: Path) -> None:
     svg_path.parent.mkdir(parents=True, exist_ok=True)
     # Use npx with the local devDependency if present; -y avoids prompts.
-    subprocess.check_call([
-        "npx", "-y", "@mermaid-js/mermaid-cli",
-        "-i", str(mmd_path),
-        "-o", str(svg_path),
-    ])
+subprocess.check_call([
+    "npx", "-y", "@mermaid-js/mermaid-cli",
+    "-i", str(mmd_path),
+    "-o", str(svg_path),
+    "--puppeteerConfigFile", "scripts/puppeteer.config.json",
+])
+
 
 
 def main() -> int:
