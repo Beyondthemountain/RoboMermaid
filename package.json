@@ -1,0 +1,13 @@
+{
+  "name": "robomermaid-diagram-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tooling to carve and render Mermaid diagrams from master sources",
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.0.0"
+  },
+  "scripts": {
+    "build:diagrams": "bash scripts/build_diagrams.sh",
+    "carve": "python scripts/carve_diagrams.py"
+  }
+}
