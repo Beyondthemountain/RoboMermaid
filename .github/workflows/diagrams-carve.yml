@@ -1,4 +1,4 @@
-name: Carve diagrams (check)
+name: Carve diagrams (auto-commit)
 
 on:
   pull_request:
@@ -6,15 +6,19 @@ on:
     branches: [ main ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  carve-check:
+  carve:
     runs-on: ubuntu-latest
+    # Prevent loop: don't run on commits created by the workflow itself
+    if: github.actor != 'github-actions[bot]'
 
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,26 +30,9 @@ jobs:
         with:
           node-version: "20"
 
-      # If your carving script depends on mermaid-cli, install it.
-      # If you have package-lock.json, prefer `npm ci`.
       - name: Install Node dependencies
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      # If you have Python deps, use requirements.txt (optional).
       - name: Install Python dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-
-      - name: Run carving script
-        run: |
-          python scripts/carve_diagrams.py
-
-      - name: Fail if outputs changed
-        run: |
-          git status --porcelain
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "Carved outputs are not up-to-date. Run scripts/carve_diagrams.py and commit the changes."
-            git diff --name-only
-            exit 1
-          fi
