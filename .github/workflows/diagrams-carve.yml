@@ -1,9 +1,22 @@
 name: Carve diagrams (auto-commit)
 
 on:
-  pull_request:
   push:
     branches: [ main ]
+    paths:
+      - "diagrams_src/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/**"
+  pull_request:
+    paths:
+      - "diagrams_src/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/**"
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -11,7 +24,7 @@ permissions:
 jobs:
   carve:
     runs-on: ubuntu-latest
-    # Prevent loop: don't run on commits created by the workflow itself
+    # Prevent loops: don't run on commits created by the workflow itself
     if: github.actor != 'github-actions[bot]'
 
     steps:
@@ -19,6 +32,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Confirm trigger
+        run: |
+          echo "Triggered by $GITHUB_EVENT_NAME on $GITHUB_REF"
+          echo "SHA: $GITHUB_SHA"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -30,9 +48,62 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install Node dependencies
+      - name: Install Git LFS
         run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          sudo apt-get update
+          sudo apt-get install -y git-lfs
+          git lfs install
+
+      # Libraries commonly required for Puppeteer/Chromium in headless mode
+      - name: Install headless browser system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libatk1.0-0 libatk-bridge2.0-0 libatspi2.0-0 libcups2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+            libgbm1 libpango-1.0-0 libpangocairo-1.0-0 libnss3 libxss1 \
+            libgtk-3-0 libasound2
 
       - name: Install Python dependencies
         run: |
+          python -m pip install --upgrade pip
+          if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+          npx -y puppeteer browsers install chrome-headless-shell
+
+      - name: Run carving script
+        run: |
+          python scripts/carve_diagrams.py
+
+      # Push regenerated outputs back to main on push events only
+      - name: Commit and push changes (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Detected regenerated files:"
+            git status --porcelain
+
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+
+            git add -A
+            git commit -m "Regenerate carved diagrams"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
+      # On PRs, fail if outputs would change (don’t try to push from PRs)
+      - name: Fail PR if outputs changed
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Carved outputs are not up-to-date for this PR."
+            echo "Run scripts/carve_diagrams.py and commit regenerated outputs."
+            git diff --name-only
+            exit 1
+          fi
