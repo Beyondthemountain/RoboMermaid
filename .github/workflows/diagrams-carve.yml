@@ -101,3 +101,9 @@ jobs:
       - name: Fail PR if outputs changed
         if: github.event_name == 'pull_request'
         run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "Carved outputs are not up-to-date for this PR."
+            echo "Run scripts/carve_diagrams.py and commit regenerated outputs."
+            git diff --name-only
+            exit 1
+          fi
