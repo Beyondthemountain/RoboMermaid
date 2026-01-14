@@ -5,17 +5,9 @@ on:
     branches: [ main ]
     paths:
       - "diagrams_src/**"
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/**"
   pull_request:
     paths:
       - "diagrams_src/**"
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/**"
   workflow_dispatch: {}
 
 permissions:
@@ -24,7 +16,7 @@ permissions:
 jobs:
   carve:
     runs-on: ubuntu-latest
-    # Prevent loops: don't run on commits created by the workflow itself
+    # Prevent infinite loop from bot commits
     if: github.actor != 'github-actions[bot]'
 
     steps:
@@ -54,7 +46,6 @@ jobs:
           sudo apt-get install -y git-lfs
           git lfs install
 
-      # Libraries commonly required for Puppeteer/Chromium in headless mode
       - name: Install headless browser system dependencies
         run: |
           sudo apt-get update
@@ -79,7 +70,7 @@ jobs:
         run: |
           python scripts/carve_diagrams.py
 
-      # Push regenerated outputs back to main on push events only
+      # Auto-commit regenerated outputs on main
       - name: Commit and push changes (main only)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
@@ -97,7 +88,7 @@ jobs:
             echo "No changes to commit."
           fi
 
-      # On PRs, fail if outputs would change (don’t try to push from PRs)
+      # Fail PRs if outputs are stale
       - name: Fail PR if outputs changed
         if: github.event_name == 'pull_request'
         run: |
