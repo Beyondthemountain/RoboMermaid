@@ -1,8 +1,8 @@
 ---
 title: "stakeholders"
 source: "diagrams-src/PlatformMindMap.mmd"
-version: "ecd4fa9"
-generated: "2026-01-13T16:19:43+00:00"
+version: "eb23057"
+generated: "2026-01-14T11:35:37+00:00"
 ---
 
 # stakeholders
@@ -12,7 +12,7 @@ generated: "2026-01-13T16:19:43+00:00"
 ```mermaid
 mindmap
 %% Global (included in all views)
-  root((Platform))
+  root((1134_Platform))
 
 
 
