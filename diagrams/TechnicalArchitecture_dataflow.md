@@ -1,8 +1,8 @@
 ---
 title: "dataflow"
 source: "diagrams-src/TechnicalArchitecture.mmd"
-version: "eb23057"
-generated: "2026-01-14T11:35:37+00:00"
+version: "1c77488"
+generated: "2026-01-14T11:42:44+00:00"
 ---
 
 # dataflow
