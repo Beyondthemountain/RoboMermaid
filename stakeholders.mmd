@@ -1,0 +1,37 @@
+flowchart LR
+
+%% Lane: Technical contributors
+subgraph R1["Technical contributors\n(API + standards)"]
+  T_EDIT["Edit spec via OpenAPI GUI\n(or YAML in IDE)"]
+  T_REVIEW["Review spec changes\n(PR / diffs)"]
+end
+
+%% Lane: BAs / project team
+subgraph R2["BA / project team\n(approach + narrative)"]
+  B_CAPTURE["Capture approach in master MMD\n(process / architecture)"]
+  B_REVIEW["Review diagrams for clarity\n(stakeholder sign-off)"]
+end
+
+%% Lane: CI / automation
+subgraph R3["Automation\n(CI / build pipeline)"]
+  CI_VALIDATE["Validate OpenAPI"]
+  CI_GEN["Generate diagrams\n(YAML → MMD → SVG)"]
+  CI_CARVE["Carve curated diagrams\n(MMD → child MMD → SVG)"]
+  CI_RELEASE["Create release bundle\n(YAML + MMD + SVG)"]
+  CI_PUBLISH["Publish to Docs repo\n(trigger VuePress)"]
+end
+
+%% Lane: Docs consumers (informative audience)
+subgraph R4["Consumers\n(technical readers, implementers,\nnon-contributing stakeholders)"]
+  C_BROWSE["Browse VuePress site\n(explanations + visuals)"]
+  C_DOWNLOAD["Download artefacts\n(YAML + MMD)"]
+  C_IMPLEMENT["Implement / assess against standard\n(using YAML)"]
+end
+
+%% Flows across lanes
+T_EDIT --> CI_VALIDATE --> T_REVIEW
+B_CAPTURE --> CI_CARVE --> B_REVIEW
+
+CI_VALIDATE --> CI_GEN --> CI_RELEASE
+CI_CARVE --> CI_RELEASE
+CI_RELEASE --> CI_PUBLISH --> C_BROWSE --> C_DOWNLOAD --> C_IMPLEMENT
