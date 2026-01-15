@@ -1,0 +1,44 @@
+flowchart LR
+
+%% LANE 1: Authoring & Tooling
+subgraph L1["Authoring tools (Core)"]
+  APIGUI["OpenAPI GUI\n(Pages in Core)"]
+  EDITOR["Editor / IDE\n(YAML + MMD)"]
+end
+
+%% LANE 2: Source artefacts
+subgraph L2["Canonical sources (Core)"]
+  YAML["OpenAPI YAML\n(normative)"]
+  MMD_MASTER["Curated master MMD\n(project approach / architecture)"]
+end
+
+%% LANE 3: Automation & CI
+subgraph L3["Automation (Core CI / local)"]
+  VALIDATE["Validate OpenAPI\n(lint / schema checks)"]
+  GEN_SPEC_DIAGS["Generate spec diagrams\n(YAML → MMD)"]
+  RENDER_SPEC["Render diagrams\n(MMD → SVG)"]
+  CARVE["Carve curated diagrams\n(master MMD → child MMD)"]
+  RENDER_CURATED["Render curated diagrams\n(child MMD → SVG)"]
+  PACKAGE["Package release bundle\n(YAML + MMD + SVG)"]
+end
+
+%% LANE 4: Publication stack
+subgraph L4[" hookup to Docs (Docs repo + Pages)"]
+  DOCS_REPO["Docs repo\n(VuePress content)"]
+  VUEPRESS["VuePress build"]
+  PAGES["GitHub Pages\n(public site)"]
+end
+
+%% Flows
+APIGUI --> YAML
+EDITOR --> YAML
+EDITOR --> MMD_MASTER
+
+YAML --> VALIDATE --> GEN_SPEC_DIAGS --> RENDER_SPEC
+MMD_MASTER --> CARVE --> RENDER_CURATED
+
+RENDER_SPEC --> PACKAGE
+RENDER_CURATED --> PACKAGE
+YAML --> PACKAGE
+
+PACKAGE --> DOCS_REPO --> VUEPRESS --> PAGES
