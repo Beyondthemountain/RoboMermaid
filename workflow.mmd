@@ -1,0 +1,46 @@
+flowchart LR
+
+%% =========================
+%% Core repository
+%% =========================
+subgraph Core["Core repository (authoring & validation)"]
+
+  API_GUI["API GUI (Pages)"]
+  YAML["OpenAPI YAML\n(normative)"]
+
+  API_GUI -->|"author / edit"| YAML
+
+  YAML -->|"auto-generate"| GEN_MMD["Generated MMD\n(from YAML)"]
+  GEN_MMD --> GEN_SVG["Generated SVG"]
+
+  BA_MMD["Curated master MMD\n(project & architecture)"]
+  BA_MMD -->|"carve views"| CARVED_MMD["Carved child MMD"]
+  CARVED_MMD --> CARVED_SVG["Curated SVG"]
+
+end
+
+%% =========================
+%% Release boundary
+%% =========================
+RELEASE["Release / publish boundary"]
+
+GEN_SVG --> RELEASE
+CARVED_SVG --> RELEASE
+YAML --> RELEASE
+CARVED_MMD --> RELEASE
+
+%% =========================
+%% Docs repository
+%% =========================
+subgraph Docs["Docs repository (publication)"]
+
+  DOCS_MD["Markdown explanations"]
+  VUEPRESS["VuePress build"]
+  PAGES["GitHub Pages\n(public consumption)"]
+
+  RELEASE --> DOCS_MD
+  RELEASE --> VUEPRESS
+  DOCS_MD --> VUEPRESS
+  VUEPRESS --> PAGES
+
+end
